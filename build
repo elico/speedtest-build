@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+cp -av /speedtest-server /build/
+
+git clone https://github.com/miquels/speedtest /build/speedtest
+
+cd /build/speedtest
+
+yarn
+
+yarn build
+
+
+mkdir /build/html-root
+cp -av dist/* /build/html-root
