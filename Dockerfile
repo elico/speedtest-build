@@ -1,13 +1,10 @@
-FROM golang:alpine AS build-env
+FROM rust AS build-env
 
 LABEL maintainer "Eliezer Croitoru <ngtech1ltd@gmail.com>"
 
-RUN apk add --no-cache curl git vim bash wget
-
 RUN git clone https://github.com/miquels/speedtest /build/speedtest && \
     cd /build/speedtest/server && \
-    go get -v -u github.com/gorilla/websocket && \
-    CGO_ENABLED=0 go build server.go 
+    make
 
 
 FROM debian:buster
@@ -21,9 +18,8 @@ RUN apt update && apt upgrade -y && \
 	echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
 	apt update && apt install yarn -y
 
-
 RUN apt install git -y
 
-COPY --from=build-env /build/speedtest/server/server /speedtest-server
+COPY --from=build-env /build/speedtest/server/speedtest-server /speedtest-server
 
 CMD ["/build/build"]
